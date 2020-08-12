@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Conway's Game of Life</title>
+    <style>
+      h1 {
+        text-align: center;
+        font-family: Courier New;
+        font-size: 30px;
+      }
+
+      h2 {
+        text-align: center;
+        font-family: Courier New;
+        font-size: 20px;
+      }
+
+      table {
+	      border: 1px solid black;
+        border-collapse: collapse;
+        margin: auto;
+      }
+
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        width: 15px;
+        height: 15px;
+        background-color: royalBlue;
+      }
+
+      .buttons {
+        text-align: center;
+      }
+      
+      .step-button {
+        font-size: 20px;
+        font-family: monospace;
+        padding: 5px 20px;
+        border-radius: 10px;
+        background-color: hotPink;
+      }
+
+      .reset-button {
+        font-size: 20px;
+        font-family: monospace;
+        padding: 5px 20px;
+        border-radius: 10px;
+        background-color: lightSalmon;
+      }
+
+      .go-button {
+        font-size: 20px;
+        font-family: monospace;
+        padding: 5px 20px;
+        border-radius: 10px;
+        background-color: khaki;
+      }
+
+      .pause-button {
+        font-size: 20px;
+        font-family: monospace;
+        padding: 5px 20px;
+        border-radius: 10px;
+        background-color: turquoise;
+      }
+
+      .random-button {
+        font-size: 20px;
+        font-family: monospace;
+        padding: 5px 20px;
+        border-radius: 10px;
+        background-color: mediumPurple;
+      }
+
+    </style>
+    <h1>Conway's Game of Life</h1>
+    <h2>Amanda Warkow</h2>
+  </head>
+  <body>
+    <div id="tbl-container"></div></br>
+    <div class="buttons">
+    <button id="step-button" class="step-button">Step</button>
+    <button id="reset-button" class="reset-button">Reset</button>
+    <button id="go-button" class="go-button">Go</button>
+    <button id="pause-button" class="pause-button">Pause</button>
+    <button id="random-button" class="random-button">Random</button>
+    </div>
+    <script src="conway.js"></script>
+    <script>
+
+    let gameBoard = [];
+
+  
+  function resetBoard() {
+    for (let i = 0; i < 25; i++) {
+      gameBoard[i] = [];
+      for (let j = 0; j < 25; j++) {
+        if ((i % 2) === 0) {
+          if ((j % 2) === 1) {
+            gameBoard[i][j] = false;
+          } else {
+              gameBoard[i][j] = true;
+          }
+         }
+
+        if ((i % 2) === 1) {
+          if ((j % 2) === 0) {
+            gameBoard[i][j] = false;
+          } else {
+            gameBoard[i][j] = true;
+          }
+        }
+      }
+    }
+  }
+
+  function randomBoard() {
+    for (let i = 0; i < 25; i++) {
+      gameBoard[i] = [];
+      for (let j = 0; j < 25; j++) {
+        let num = Math.floor(Math.random() * 2); 
+        console.log(num);
+        if (num === 0) {
+          gameBoard[i][j] = false;
+        } else {
+          gameBoard[i][j] = true;
+        }
+      }
+    }
+  }
+
+  resetBoard();
+        
+  let container = document.getElementById("tbl-container");
+  let tbl = document.createElement("table");
+  tbl.id = "table-board";
+  for (let i = 0; i < gameBoard.length; i++) {
+    let row = document.createElement("tr");
+    for (let j = 0; j < gameBoard[i].length; j++) {
+      let cell = document.createElement("td");
+      if (!gameBoard[i][j]) {
+        cell.style.backgroundColor = "white";
+        cell.content = "Dead";
+      } else {
+          cell.content = "Live";
+      }
+      row.appendChild(cell);
+    }
+    tbl.appendChild(row);
+  }
+  container.append(tbl);
+      
+
+  function updateBoard(board) {
+        let rows = document.getElementsByTagName("tr");
+        for (let i = 0; i < rows.length; i++) {
+          let row = rows[i];
+          for (let j = 0; j < rows.length; j++) {
+            let cell = row.cells[j];
+            if (!board[i][j]) {
+              cell.content = "Dead";
+              cell.style.backgroundColor = "white";
+            } else {
+              cell.content = "Live";
+              cell.style.backgroundColor = "royalBlue";
+            }
+          }
+        }
+    }
+
+    function onStepClick() {
+	      gameBoard = stepBoard(gameBoard);
+        updateBoard(gameBoard);
+    }
+
+    function onResetClick() {
+        clearInterval(stepInterval);
+	      resetBoard();
+        updateBoard(gameBoard);
+    }
+
+    let stepInterval;
+
+    function onGoClick() {
+      clearInterval(stepInterval);
+	    stepInterval = setInterval(onStepClick, 100);
+    }
+
+    function onPauseClick() {
+      clearInterval(stepInterval);
+    }
+
+    function onRandomClick() {
+      clearInterval(stepInterval);
+      randomBoard();
+      updateBoard(gameBoard);
+    }
+
+    let stepButton = document.getElementById("step-button");
+    stepButton.addEventListener("click", onStepClick);
+
+    let resetButton = document.getElementById("reset-button");
+    resetButton.addEventListener("click", onResetClick);
+
+    let goButton = document.getElementById("go-button");
+    goButton.addEventListener("click", onGoClick);
+
+    let pauseButton = document.getElementById("pause-button");
+    pauseButton.addEventListener("click", onPauseClick);
+
+    let randomButton = document.getElementById("random-button");
+    randomButton.addEventListener("click", onRandomClick);
+      
+    </script>
+  </body>
+</html>
